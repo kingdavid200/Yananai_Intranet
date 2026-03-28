@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}Documents — Project Yananai{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex items-center justify-between flex-wrap gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">Documents</h1>
+        <p class="text-sm text-gray-500 mt-0.5">Shared files and resources across the network</p>
+    </div>
+    {% if user.is_staff_member %}
+    <a href="/documents/upload/" class="btn-primary">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        Upload Document
+    </a>
+    {% endif %}
+</div>
+
+<!-- Filters -->
+<form method="get" class="card p-4 mb-6">
+    <div class="flex flex-wrap items-end gap-4">
+        <div class="flex-1 min-w-44">
+            <label class="form-label">Search</label>
+            <div class="relative">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" name="q" value="{{ query }}" placeholder="Search documents…" class="form-input pl-9">
+            </div>
+        </div>
+        <div>
+            <label class="form-label">Category</label>
+            <select name="category" class="form-input">
+                <option value="">All Categories</option>
+                {% for value, label in category_choices %}
+                <option value="{{ value }}" {% if category_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="flex gap-2">
+            <button type="submit" class="btn-primary">Filter</button>
+            {% if query or category_filter %}
+            <a href="/documents/" class="btn-secondary">Clear</a>
+            {% endif %}
+        </div>
+    </div>
+</form>
+
+<!-- Documents Table -->
+<div class="card overflow-hidden">
+    <div class="divide-y divide-gray-50">
+        {% for doc in documents %}
+        <div class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors">
+            <!-- File Icon -->
+            <div class="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xs
+                {% if doc.file_extension == 'pdf' %}bg-red-100 text-red-600
+                {% elif doc.file_extension in 'doc docx' %}bg-blue-100 text-blue-600
+                {% elif doc.file_extension in 'xls xlsx' %}bg-emerald-100 text-emerald-600
+                {% elif doc.file_extension in 'ppt pptx' %}bg-orange-100 text-orange-600
+                {% else %}bg-gray-100 text-gray-500{% endif %}">
+                {{ doc.file_extension|upper|slice:":3" }}
+            </div>
+
+            <!-- Info -->
+            <div class="flex-1 min-w-0">
+                <p class="font-semibold text-gray-900 truncate text-sm">{{ doc.title }}</p>
+                <div class="flex flex-wrap items-center gap-2 mt-1">
+                    <span class="badge bg-gray-100 text-gray-600">{{ doc.get_category_display }}</span>
+                    <span class="badge
+                        {% if doc.access_level == 'global' %}bg-emerald-100 text-emerald-700
+                        {% elif doc.access_level == 'affiliate' %}bg-amber-100 text-amber-700
+                        {% else %}bg-red-100 text-red-700{% endif %}">
+                        {{ doc.get_access_level_display }}
+                    </span>
+                    {% if doc.affiliate %}
+                    <span class="badge" style="background-color:#EEECf9; color:#574A9E;">{{ doc.affiliate.name }}</span>
+                    {% endif %}
+                    <span class="text-xs text-gray-400">{{ doc.uploaded_at|date:"d M Y" }} &middot; {{ doc.uploaded_by.get_display_name }}</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <a href="/documents/{{ doc.pk }}/download/" class="btn-secondary text-xs">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    Download
+                </a>
+                {% if user.is_admin %}
+                <form method="post" action="/documents/{{ doc.pk }}/delete/" class="inline" onsubmit="return confirm('Delete this document?')">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-danger text-xs">Delete</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="py-16 text-center">
+            <svg class="w-12 h-12 mx-auto mb-4 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <p class="text-gray-400 font-medium mb-3">No documents found</p>
+            {% if user.is_staff_member %}
+            <a href="/documents/upload/" class="btn-primary">Upload the first document</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

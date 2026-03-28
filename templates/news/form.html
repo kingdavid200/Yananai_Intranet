@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Announcement — Project Yananai{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="mb-6 flex items-center justify-between flex-wrap gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">{{ action }} Announcement</h1>
+            <p class="text-sm text-gray-500 mt-0.5">Post an update to the team</p>
+        </div>
+        <a href="/news/" class="btn-secondary">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Back to News
+        </a>
+    </div>
+
+    <div class="card p-7">
+        {% if form.errors %}
+        <div class="mb-5 p-4 rounded-lg bg-red-50 border border-red-200">
+            {% for field in form %}{% for error in field.errors %}
+            <p class="text-sm text-red-700"><span class="font-medium">{{ field.label }}:</span> {{ error }}</p>
+            {% endfor %}{% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" class="space-y-5">
+            {% csrf_token %}
+            <div>
+                <label class="form-label">Title <span class="text-red-500">*</span></label>
+                {{ form.title }}
+            </div>
+            <div>
+                <label class="form-label">Body <span class="text-red-500">*</span></label>
+                {{ form.body }}
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                    <label class="form-label">Affiliate <span class="text-gray-400 font-normal">(optional)</span></label>
+                    {{ form.affiliate }}
+                    <p class="text-xs text-gray-400 mt-1.5">Leave blank to post to all affiliates globally.</p>
+                </div>
+                <div class="flex items-center gap-3 pt-7">
+                    {{ form.is_pinned }}
+                    <label class="text-sm font-medium text-gray-700">Pin this announcement</label>
+                </div>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button type="submit" class="btn-primary">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    {{ action }}
+                </button>
+                <a href="/news/" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}My Profile — Project Yananai{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">My Profile</h1>
+
+    <!-- Profile Header Card -->
+    <div class="card p-6 mb-6">
+        <div class="flex items-center gap-5">
+            {% if user.profile_photo %}
+                <img src="{{ user.profile_photo.url }}" alt="{{ user.get_display_name }}"
+                     class="w-20 h-20 rounded-full object-cover ring-4 ring-white shadow-md flex-shrink-0">
+            {% else %}
+                <div class="w-20 h-20 rounded-full flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 shadow-md"
+                     style="background-color:#574A9E;">
+                    {{ user.get_display_name|first|upper }}
+                </div>
+            {% endif %}
+            <div>
+                <h2 class="text-xl font-bold text-gray-900">{{ user.get_display_name }}</h2>
+                <p class="text-sm text-gray-500 mt-0.5">{{ user.email }}</p>
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <span class="badge" style="background-color:#EEECf9; color:#574A9E;">{{ user.get_role_display }}</span>
+                    {% if user.affiliate %}
+                    <span class="badge bg-gray-100 text-gray-600">{{ user.affiliate }}</span>
+                    {% endif %}
+                    {% if user.job_title %}
+                    <span class="badge bg-gray-100 text-gray-600">{{ user.job_title }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Form -->
+    <div class="card p-7">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-5">Edit Profile</p>
+        <form method="post" enctype="multipart/form-data" class="space-y-5">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                    <label class="form-label">Full Name</label>
+                    {{ form.full_name }}
+                </div>
+                <div>
+                    <label class="form-label">Job Title</label>
+                    {{ form.job_title }}
+                </div>
+                <div>
+                    <label class="form-label">Phone</label>
+                    {{ form.phone }}
+                </div>
+            </div>
+            <div>
+                <label class="form-label">Bio</label>
+                {{ form.bio }}
+            </div>
+            <div>
+                <label class="form-label">Profile Photo</label>
+                {{ form.profile_photo }}
+                {% if user.profile_photo %}
+                <p class="text-xs text-gray-400 mt-1">Current photo will be replaced if you choose a new one.</p>
+                {% endif %}
+            </div>
+            <div class="pt-2">
+                <button type="submit" class="btn-primary">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

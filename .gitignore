@@ -1,0 +1,46 @@
+# Environment
+.env
+*.env
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Media files
+media/
+
+# Static files collected
+staticfiles/
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Local dev helpers (Mac-only)
+run_server.command
+setup.command
+*.webloc
+
+# Migrations (optional – remove if you want to track migrations)
+# */migrations/

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block title %}Staff Directory — Project Yananai{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex items-center justify-between flex-wrap gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">Staff Directory</h1>
+        <p class="text-sm text-gray-500 mt-0.5">All staff across the Yananai network</p>
+    </div>
+    {% if user.is_admin %}
+    <a href="/accounts/register/" class="btn-primary">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+        Add Staff
+    </a>
+    {% endif %}
+</div>
+
+<!-- Filters -->
+<form method="get" class="card p-4 mb-6">
+    <div class="flex flex-wrap items-end gap-4">
+        <div class="flex-1 min-w-44">
+            <label class="form-label">Search</label>
+            <div class="relative">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input type="text" name="q" value="{{ query }}" placeholder="Name, email, job title…"
+                       class="form-input pl-9">
+            </div>
+        </div>
+        <div>
+            <label class="form-label">Role</label>
+            <select name="role" class="form-input">
+                <option value="">All Roles</option>
+                {% for value, label in role_choices %}
+                <option value="{{ value }}" {% if role_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="form-label">Affiliate</label>
+            <select name="affiliate" class="form-input">
+                <option value="">All Affiliates</option>
+                {% for affiliate in affiliates %}
+                <option value="{{ affiliate.pk }}" {% if affiliate_filter == affiliate.pk|stringformat:'s' %}selected{% endif %}>{{ affiliate.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="flex gap-2">
+            <button type="submit" class="btn-primary">Search</button>
+            {% if query or role_filter or affiliate_filter %}
+            <a href="/directory/" class="btn-secondary">Clear</a>
+            {% endif %}
+        </div>
+    </div>
+</form>
+
+<!-- Results count -->
+{% if users %}
+<p class="text-sm text-gray-500 mb-4">Showing {{ users|length }} staff member{{ users|length|pluralize }}</p>
+{% endif %}
+
+<!-- Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    {% for member in users %}
+    <a href="/directory/{{ member.pk }}/" class="card p-5 hover:shadow-md transition-all hover:-translate-y-0.5 group">
+        <div class="flex items-center gap-3 mb-4">
+            {% if member.profile_photo %}
+                <img src="{{ member.profile_photo.url }}" alt="{{ member.get_display_name }}"
+                     class="w-11 h-11 rounded-full object-cover flex-shrink-0">
+            {% else %}
+                <div class="w-11 h-11 rounded-full flex items-center justify-center text-white text-base font-bold flex-shrink-0"
+                     style="background-color:#574A9E;">
+                    {{ member.get_display_name|first|upper }}
+                </div>
+            {% endif %}
+            <div class="min-w-0">
+                <p class="font-semibold text-gray-900 truncate text-sm group-hover:text-brand transition-colors" style="--tw-text-opacity:1;">{{ member.get_display_name }}</p>
+                <p class="text-xs text-gray-400 truncate">{{ member.job_title|default:"—" }}</p>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-1.5 mb-3">
+            <span class="badge {% if member.role == 'admin' %}bg-red-100 text-red-700{% elif member.role == 'staff' %}bg-blue-100 text-blue-700{% else %}bg-gray-100 text-gray-600{% endif %}">
+                {{ member.get_role_display }}
+            </span>
+            {% if member.affiliate %}
+            <span class="badge bg-emerald-100 text-emerald-700">{{ member.affiliate.country }}</span>
+            {% endif %}
+        </div>
+        <p class="text-xs text-gray-400 truncate">{{ member.email }}</p>
+    </a>
+    {% empty %}
+    <div class="col-span-full card py-16 text-center">
+        <svg class="w-12 h-12 mx-auto mb-4 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        <p class="text-gray-400 font-medium">No staff members found</p>
+        {% if query or role_filter or affiliate_filter %}
+        <a href="/directory/" class="text-sm mt-2 inline-block" style="color:#574A9E;">Clear filters</a>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
