@@ -43,10 +43,38 @@ class User(AbstractUser):
         ('viewer', 'Viewer'),
     ]
 
+    TEAM_CHOICES = [
+        ('it_admin', 'IT Admin'),
+        ('global_exec', 'Global Executive Leadership Team'),
+        ('board', 'Board of Trustees'),
+        ('regional_mgmt', 'Regional Management Team'),
+        ('india', 'India Team'),
+        ('south_africa', 'South Africa Team'),
+        ('zambia', 'Zambia Team'),
+        ('zimbabwe', 'Zimbabwe Team'),
+        ('uk', 'UK Team'),
+        ('general', 'General Staff'),
+    ]
+
+    # Colour accents per team (used in templates)
+    TEAM_COLORS = {
+        'it_admin': {'bg': '#EEECf9', 'text': '#574A9E', 'label': 'IT Admin'},
+        'global_exec': {'bg': '#EFF6FF', 'text': '#1D4ED8', 'label': 'Global Exec'},
+        'board': {'bg': '#F1F5F9', 'text': '#334155', 'label': 'Board of Trustees'},
+        'regional_mgmt': {'bg': '#ECFDF5', 'text': '#047857', 'label': 'Regional Management'},
+        'india': {'bg': '#FFF7ED', 'text': '#C2410C', 'label': 'India Team'},
+        'south_africa': {'bg': '#F0FDF4', 'text': '#15803D', 'label': 'South Africa Team'},
+        'zambia': {'bg': '#FEF3C7', 'text': '#B45309', 'label': 'Zambia Team'},
+        'zimbabwe': {'bg': '#FEF2F2', 'text': '#B91C1C', 'label': 'Zimbabwe Team'},
+        'uk': {'bg': '#EFF6FF', 'text': '#1E40AF', 'label': 'UK Team'},
+        'general': {'bg': '#F9FAFB', 'text': '#374151', 'label': 'Staff'},
+    }
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     full_name = models.CharField(max_length=200, blank=True)
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='staff')
+    team = models.CharField(max_length=20, choices=TEAM_CHOICES, default='general')
     affiliate = models.ForeignKey(
         Affiliate,
         on_delete=models.SET_NULL,

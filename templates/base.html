@@ -153,7 +153,13 @@
             {% endif %}
             <div class="flex-1 min-w-0">
                 <p class="text-white text-sm font-medium truncate">{{ user.get_display_name }}</p>
-                <p class="text-gray-500 text-xs truncate">{{ user.get_role_display }}</p>
+                <p class="text-gray-500 text-xs truncate">
+                    {% with colors=user.TEAM_COLORS %}
+                    {% with tc=colors|default_if_none:'' %}
+                    {{ user.get_team_display }}
+                    {% endwith %}
+                    {% endwith %}
+                </p>
             </div>
             <a href="/accounts/profile/" class="text-gray-500 hover:text-white transition-colors" title="Profile">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
