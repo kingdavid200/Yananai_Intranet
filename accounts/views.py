@@ -80,14 +80,14 @@ def dashboard_view(request):
     # Documents — admins see everything; others see global + their affiliate
     if user.is_admin:
         total_documents = Document.objects.count()
-        recent_docs = Document.objects.order_by('-created_at')[:5]
+        recent_docs = Document.objects.order_by('-uploaded_at')[:5]
     else:
         doc_qs = Document.objects.filter(
             Q(access_level='global') |
             Q(access_level='affiliate', affiliate=user.affiliate)
         )
         total_documents = doc_qs.count()
-        recent_docs = doc_qs.order_by('-created_at')[:5]
+        recent_docs = doc_qs.order_by('-uploaded_at')[:5]
 
     # Announcements — global ones + affiliate-specific
     latest_announcements = Announcement.objects.filter(

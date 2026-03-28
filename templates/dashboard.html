@@ -122,7 +122,7 @@
           {% for project in all_projects %}
           <div class="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-gray-800 truncate">{{ project.title }}</p>
+              <p class="text-sm font-medium text-gray-800 truncate">{{ project.name }}</p>
               {% if project.affiliate %}
               <p class="text-xs text-gray-400">{{ project.affiliate.name }}</p>
               {% endif %}
@@ -154,7 +154,7 @@
         <div class="space-y-2">
           {% for project in affiliate_projects %}
           <div class="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
-            <p class="text-sm font-medium text-gray-800 truncate flex-1">{{ project.title }}</p>
+            <p class="text-sm font-medium text-gray-800 truncate flex-1">{{ project.name }}</p>
             <span class="ml-3 px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">Active</span>
           </div>
           {% empty %}
@@ -236,7 +236,7 @@
           <div class="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
             <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
             <p class="text-sm text-gray-700 truncate flex-1">{{ doc.title }}</p>
-            <span class="text-xs text-gray-400 flex-shrink-0">{{ doc.created_at|date:"d M" }}</span>
+            <span class="text-xs text-gray-400 flex-shrink-0">{{ doc.uploaded_at|date:"d M" }}</span>
           </div>
           {% endfor %}
         </div>
